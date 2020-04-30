@@ -1,6 +1,11 @@
 Menu = {}
 
 local logoSmall = Image:new(Graphics.loadImage("app0:assets/images/logo-small.png"))
+local libraryIcon = Image:new(Graphics.loadImage("app0:assets/icons/library.png"))
+local catalogsIcon = Image:new(Graphics.loadImage("app0:assets/icons/catalogs.png"))
+local historyIcon = Image:new(Graphics.loadImage("app0:assets/icons/history.png"))
+local downloadsIcon = Image:new(Graphics.loadImage("app0:assets/icons/downloads.png"))
+local settingsIcon = Image:new(Graphics.loadImage("app0:assets/icons/settings.png"))
 
 ---@param mode string
 ---Menu mode
@@ -93,9 +98,15 @@ function Menu.draw()
     end
     Screen.clear(Themes[Settings.Theme].COLOR_LEFT_BACK)
     if logoSmall then
-        Graphics.drawImage(0, 0, logoSmall.e)
+        --Graphics.drawImage(0, 0, logoSmall.e)
     end
-    Graphics.fillRect(255, 960, 0, 544, COLOR_BACK)
+    Graphics.fillRect(50, 960, 0, 544, COLOR_BACK)
+    Graphics.drawImage(9, 144, libraryIcon.e, COLOR_GRADIENT(COLOR_ROYAL_BLUE, COLOR_CRIMSON, button_a["LIBRARY"]))
+    Graphics.drawImage(9, 224, catalogsIcon.e, COLOR_GRADIENT(COLOR_ROYAL_BLUE, COLOR_CRIMSON, button_a["CATALOGS"]))
+    Graphics.drawImage(9, 304, historyIcon.e, COLOR_GRADIENT(COLOR_ROYAL_BLUE, COLOR_CRIMSON, button_a["HISTORY"]))
+    Graphics.drawImage(9, 424, downloadsIcon.e, COLOR_GRADIENT(COLOR_ROYAL_BLUE, COLOR_CRIMSON, button_a["DOWNLOAD"]))
+    Graphics.drawImage(9, 494, settingsIcon.e, COLOR_GRADIENT(COLOR_ROYAL_BLUE, COLOR_CRIMSON, button_a["SETTINGS"]))
+    --[[
     Font.print(FONT30, 30, 107, Language[Settings.Language].APP.LIBRARY, Color.new(255, 255, 255, 255 - 128 * button_a["LIBRARY"]))
     Font.print(FONT30, 30, 167, Language[Settings.Language].APP.CATALOGS, Color.new(255, 255, 255, 255 - 128 * button_a["CATALOGS"]))
     Font.print(FONT30, 30, 227, Language[Settings.Language].APP.HISTORY, Color.new(255, 255, 255, 255 - 128 * button_a["HISTORY"]))
@@ -113,6 +124,7 @@ function Menu.draw()
     end
     Graphics.fillCircle(15, 428, 6, Color.new(65, 105, 226, 255 * download_led - 160 * download_led * math.abs(math.sin(Timer.getTime(GlobalTimer) / 1000))))
     Font.print(FONT30, 30, 468, Language[Settings.Language].APP.SETTINGS, Color.new(255, 255, 255, 255 - 128 * button_a["SETTINGS"]))
+    --]]
     if Details.getFade() ~= 1 then
         Catalogs.draw()
     end

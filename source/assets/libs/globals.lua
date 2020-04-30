@@ -44,6 +44,12 @@ COLOR_SELECTED = COLOR_WHITE
 COLOR_ICON_EXTRACT = COLOR_WHITE
 COLOR_PANEL = COLOR_WHITE
 
+function COLOR_GRADIENT(colorA, colorB, a)
+    local r1, g1, b1 = Color.getR(colorA), Color.getG(colorA), Color.getB(colorA)
+    local r2, g2, b2 = Color.getR(colorB), Color.getG(colorB), Color.getB(colorB)
+    return Color.new(r1 + (r2 - r1) * a, g1 + (g2 - g1) * a, b1 + (b2 - b1) * a)
+end
+
 SCE_CTRL_RIGHTPAGE = SCE_CTRL_RTRIGGER
 SCE_CTRL_LEFTPAGE = SCE_CTRL_LTRIGGER
 
