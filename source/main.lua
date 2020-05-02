@@ -250,7 +250,7 @@ local function draw()
         Changes.draw()
     end
     Notifications.draw()
-    Panel.draw()
+    --Panel.draw()
     Debug.draw()
     Graphics.termBlend()
     Screen.flip()

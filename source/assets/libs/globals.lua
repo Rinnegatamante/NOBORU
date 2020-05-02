@@ -78,7 +78,7 @@ local createDirectory = System.createDirectory
 local deleteFile = System.deleteFile
 local doesFileExist = System.doesFileExist
 
-MANGA_WIDTH = 160
+MANGA_WIDTH = 210
 MANGA_HEIGHT = math.floor(MANGA_WIDTH * 1.5)
 
 GlobalTimer = Timer.new()

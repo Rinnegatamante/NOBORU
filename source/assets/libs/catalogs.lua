@@ -387,8 +387,8 @@ function Catalogs.update()
         if Slider.Y < 0 then
             Slider.Y = 0
             Slider.V = 0
-        elseif Slider.Y > ceil(#Results / 4) * (MANGA_HEIGHT + 12) - 512 then
-            Slider.Y = max(0, ceil(#Results / 4) * (MANGA_HEIGHT + 12) - 512)
+        elseif Slider.Y > ceil(#Results / 4) * (MANGA_HEIGHT + 14) - 544 + 14 then
+            Slider.Y = max(0, ceil(#Results / 4) * (MANGA_HEIGHT + 14) - 544 + 14)
             Slider.V = 0
             if mode == "MANGA" then
                 if not Results.NoPages and Parser then
@@ -796,10 +796,10 @@ function Catalogs.draw()
             end
         end
     elseif mode == "MANGA" or mode == "LIBRARY" or mode == "HISTORY" then
-        local start = max(1, floor(Slider.Y / (MANGA_HEIGHT + 12)) * 4 + 1)
+        local start = max(1, floor(Slider.Y / (MANGA_HEIGHT + 14)) * 4 + 1)
         for i = start, min(#Results, start + 15) do
-            local x = 610 + (((i - 1) % 4) - 2) * (MANGA_WIDTH + 10)
-            local y = -Slider.Y + floor((i - 1) / 4) * (MANGA_HEIGHT + 12) + 12
+            local x = 505 + (((i - 1) % 4) - 2) * (MANGA_WIDTH + 14) + 7
+            local y = -Slider.Y + floor((i - 1) / 4) * (MANGA_HEIGHT + 14) + 14
             DrawManga(x + MANGA_WIDTH / 2, y + MANGA_HEIGHT / 2, Results[i])
             if mode == "LIBRARY" and Results[i].Counter then
                 local c = Results[i].Counter
@@ -809,10 +809,11 @@ function Catalogs.draw()
                 end
             end
         end
+        --[[
         local item = MangaSelector:getSelected()
         if item ~= 0 then
-            local x = 610 + (((item - 1) % 4) - 2) * (MANGA_WIDTH + 10) + MANGA_WIDTH / 2
-            local y = MANGA_HEIGHT / 2 - Slider.Y + floor((item - 1) / 4) * (MANGA_HEIGHT + 12) + 12
+            local x = 515 + (((item - 1) % 4) - 2) * (MANGA_WIDTH + 15) + MANGA_WIDTH / 2
+            local y = MANGA_HEIGHT / 2 - Slider.Y + floor((item - 1) / 4) * (MANGA_HEIGHT + 15) + 15
             local wh = Color.new(255, 255, 255, 100 * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
             local ks = math.ceil(4 * math.sin(Timer.getTime(GlobalTimer) / 100))
             for i = ks + 1, ks + 3 do
@@ -820,13 +821,14 @@ function Catalogs.draw()
                 Graphics.fillEmptyRect(x - MANGA_WIDTH / 2 + i, x + MANGA_WIDTH / 2 - i + 1, y - MANGA_HEIGHT / 2 + i, y + MANGA_HEIGHT / 2 - i + 1, wh)
             end
         end
+        --]]
         if #Results > 4 then
-            scroll_height = ceil(#Results / 4) * (MANGA_HEIGHT + 12) / 524
+            scroll_height = ceil(#Results / 4) * (MANGA_HEIGHT + 14) / 544
         end
     end
     Graphics.fillRect(955, 960, 0, 544, COLOR_BACK)
     if scroll_height then
-        Graphics.fillRect(955, 960, Slider.Y / scroll_height, (Slider.Y + 524) / scroll_height, COLOR_FONT)
+        Graphics.fillRect(955, 960, Slider.Y / scroll_height, (Slider.Y + 544) / scroll_height, COLOR_FONT)
     end
 end
 
