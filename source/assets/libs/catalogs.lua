@@ -530,7 +530,7 @@ function Catalogs.draw()
         end
         local elements_count = #Parsers
         if elements_count > 7 then
-            scroll_height = elements_count * 75 / 524
+            scroll_height = elements_count * 75 / 494
         end
         local item = ParserSelector:getSelected()
         if item ~= 0 then
@@ -576,7 +576,7 @@ function Catalogs.draw()
         end
         local elements_count = #list
         if elements_count > 7 then
-            scroll_height = elements_count * 75 / 524
+            scroll_height = elements_count * 75 / 494
         end
         local item = ImportSelector:getSelected()
         if item ~= 0 then
@@ -618,7 +618,7 @@ function Catalogs.draw()
         end
         local elements_count = #list
         if elements_count > 7 then
-            scroll_height = elements_count * 75 / 524
+            scroll_height = elements_count * 75 / 494
         end
         local item = DownloadSelector:getSelected()
         if item ~= 0 then
@@ -782,7 +782,7 @@ function Catalogs.draw()
         end
         local elements_count = #list
         if elements_count > 7 then
-            scroll_height = elements_count * 75 / 524
+            scroll_height = elements_count * 75 / 494
         end
         local item = SettingSelector:getSelected()
         if item ~= 0 then
