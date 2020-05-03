@@ -257,7 +257,7 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
     elseif mode == "IMPORT" then
         ImportSelector:input(#Import.listDir(), oldpad, pad, touch.x)
     end
-    if TOUCH.MODE == TOUCH.NONE and oldtouch.x and touch.x and touch.x > 240 then
+    if TOUCH.MODE == TOUCH.NONE and oldtouch.x and touch.x and touch.x >= 50 then
         TOUCH.MODE = TOUCH.READ
         Slider.TouchY = touch.y
     elseif TOUCH.MODE ~= TOUCH.NONE and not touch.x then
@@ -266,8 +266,8 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
                 if mode == "MANGA" or mode == "LIBRARY" or mode == "HISTORY" then
                     local start = max(1, floor((Slider.Y - 20) / (MANGA_HEIGHT + 12)) * 4 + 1)
                     for i = start, min(#Results, start + 11) do
-                        local lx = ((i - 1) % 4 - 2) * (MANGA_WIDTH + 10) + 610
-                        local uy = floor((i - 1) / 4) * (MANGA_HEIGHT + 12) - Slider.Y + 12
+                        local lx = ((i - 1) % 4 - 2) * (MANGA_WIDTH + 14) + 505 + 7
+                        local uy = floor((i - 1) / 4) * (MANGA_HEIGHT + 14) - Slider.Y + 14
                         if oldtouch.x > lx and oldtouch.x < lx + MANGA_WIDTH and oldtouch.y > uy and oldtouch.y < uy + MANGA_HEIGHT then
                             selectManga(i)
                             break
@@ -809,19 +809,17 @@ function Catalogs.draw()
                 end
             end
         end
-        --[[
         local item = MangaSelector:getSelected()
         if item ~= 0 then
-            local x = 515 + (((item - 1) % 4) - 2) * (MANGA_WIDTH + 15) + MANGA_WIDTH / 2
-            local y = MANGA_HEIGHT / 2 - Slider.Y + floor((item - 1) / 4) * (MANGA_HEIGHT + 15) + 15
+            local x = 505 + (((item - 1) % 4) - 2) * (MANGA_WIDTH + 14) + 7 + MANGA_WIDTH / 2
+            local y = MANGA_HEIGHT / 2 - Slider.Y + floor((item - 1) / 4) * (MANGA_HEIGHT + 14) + 14
             local wh = Color.new(255, 255, 255, 100 * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
             local ks = math.ceil(4 * math.sin(Timer.getTime(GlobalTimer) / 100))
-            for i = ks + 1, ks + 3 do
+            for i = ks + 2, ks + 4 do
                 Graphics.fillEmptyRect(x - MANGA_WIDTH / 2 + i, x + MANGA_WIDTH / 2 - i + 1, y - MANGA_HEIGHT / 2 + i, y + MANGA_HEIGHT / 2 - i + 1, Themes[Settings.Theme].COLOR_SELECTOR_MENU)
                 Graphics.fillEmptyRect(x - MANGA_WIDTH / 2 + i, x + MANGA_WIDTH / 2 - i + 1, y - MANGA_HEIGHT / 2 + i, y + MANGA_HEIGHT / 2 - i + 1, wh)
             end
         end
-        --]]
         if #Results > 4 then
             scroll_height = ceil(#Results / 4) * (MANGA_HEIGHT + 14) / 544
         end

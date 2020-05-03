@@ -14,7 +14,9 @@ local mode
 ---@param new_mode string | '"LIBRARY"' | '"CATALOGS"' | '"SETTINGS"' | '"DOWNLOAD"'
 ---Sets menu mode
 function Menu.setMode(new_mode)
-    if mode == new_mode then return end
+    if mode == new_mode then
+        return
+    end
     Catalogs.setMode(new_mode)
     mode = new_mode
 end
@@ -45,20 +47,20 @@ function Menu.input(oldpad, pad, oldtouch, touch)
         if Controls.check(pad, SCE_CTRL_LTRIGGER) and not Controls.check(oldpad, SCE_CTRL_LTRIGGER) then
             Menu.setMode(prev_mode[mode])
         end
-        if touch.x and not oldtouch.x and touch.x < 250 then
-            if touch.y < 97 then
-            elseif touch.y < 157 then
-                Menu.setMode("LIBRARY")
+        if touch.x and not oldtouch.x and touch.x < 50 then
+            if touch.y < 120 then
             elseif touch.y < 200 then
+                Menu.setMode("LIBRARY")
+            elseif touch.y < 280 then
                 Menu.setMode("CATALOGS")
-            elseif touch.y < 270 then
+            elseif touch.y < 360 then
                 Menu.setMode("HISTORY")
-            elseif touch.y > 460 then
-                Menu.setMode("SETTINGS")
-            elseif touch.y > 400 then
-                Menu.setMode("DOWNLOAD")
-            elseif touch.y > 340 then
+            elseif touch.y < 360 then
                 Menu.setMode("IMPORT")
+            elseif touch.y > 470 then
+                Menu.setMode("SETTINGS")
+            elseif touch.y > 390 then
+                Menu.setMode("DOWNLOAD")
             end
         end
         Catalogs.input(oldpad, pad, oldtouch, touch)
@@ -98,7 +100,7 @@ function Menu.draw()
     end
     Screen.clear(Themes[Settings.Theme].COLOR_LEFT_BACK)
     if logoSmall then
-        --Graphics.drawImage(0, 0, logoSmall.e)
+    --Graphics.drawImage(0, 0, logoSmall.e)
     end
     Graphics.fillRect(50, 960, 0, 544, COLOR_BACK)
     Graphics.drawImage(9, 144, libraryIcon.e, COLOR_GRADIENT(COLOR_ROYAL_BLUE, COLOR_WHITE, button_a["LIBRARY"]))
@@ -117,14 +119,14 @@ function Menu.draw()
     else
         Font.print(FONT30, 30, 408, Language[Settings.Language].APP.DOWNLOAD, Color.new(255, 255, 255, 255 - 128 * button_a["DOWNLOAD"]))
     end
+    Font.print(FONT30, 30, 468, Language[Settings.Language].APP.SETTINGS, Color.new(255, 255, 255, 255 - 128 * button_a["SETTINGS"]))
+    --]]
     if ChapterSaver.is_download_running() then
         download_led = math.min(download_led + 0.1, 1)
     else
         download_led = math.max(download_led - 0.1, 0)
     end
-    Graphics.fillCircle(15, 428, 6, Color.new(65, 105, 226, 255 * download_led - 160 * download_led * math.abs(math.sin(Timer.getTime(GlobalTimer) / 1000))))
-    Font.print(FONT30, 30, 468, Language[Settings.Language].APP.SETTINGS, Color.new(255, 255, 255, 255 - 128 * button_a["SETTINGS"]))
-    --]]
+    Graphics.fillCircle(38, 424, 6, Color.new(65, 105, 226, 255 * download_led - 160 * download_led * math.abs(math.sin(Timer.getTime(GlobalTimer) / 1000))))
     if Details.getFade() ~= 1 then
         Catalogs.draw()
     end
