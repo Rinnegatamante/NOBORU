@@ -342,7 +342,7 @@ function Catalogs.update()
     if mode == "MANGA" or mode == "LIBRARY" or mode == "HISTORY" then
         UpdateMangas()
         if ParserManager.check(Results) then
-            Loading.setMode(COLOR_FONT == COLOR_BLACK and "BLACK" or "WHITE", 600, 272)
+            Loading.setMode(COLOR_FONT == COLOR_BLACK and "BLACK" or "WHITE", 496, 302)
         elseif Details.getMode() == "END" then
             Loading.setMode("NONE")
         end
@@ -512,7 +512,7 @@ function Catalogs.draw()
             end
             Font.print(FONT26, 65, y - 70, parser.Name, COLOR_FONT)
             local lang_text = Language[Settings.Language].PARSERS[parser.Lang] or parser.Lang or ""
-            Font.print(FONT16, 935 - Font.getTextWidth(FONT16, lang_text), y - 10 - Font.getTextHeight(FONT16, lang_text), lang_text, Color.new(101, 101, 101))
+            Font.print(FONT16, 940 - Font.getTextWidth(FONT16, lang_text), y - 10 - Font.getTextHeight(FONT16, lang_text), lang_text, Color.new(101, 101, 101))
             local width = Font.getTextWidth(FONT26, parser.Name)
             if parser.NSFW then
                 Font.print(FONT16, 70 + width, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "NSFW"), "NSFW", COLOR_ROYAL_BLUE)
@@ -523,7 +523,7 @@ function Catalogs.draw()
             elseif parser.isUpdated then
                 Font.print(FONT16, 70 + width, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "Updated"), "Updated", COLOR_CRIMSON)
             end
-            Font.print(FONT16, 935 - Font.getTextWidth(FONT16, "v" .. parser.Version), y - 65, "v" .. parser.Version, Color.new(101, 101, 101))
+            Font.print(FONT16, 940 - Font.getTextWidth(FONT16, "v" .. parser.Version), y - 65, "v" .. parser.Version, Color.new(101, 101, 101))
             local link_text = parser.Link .. "/"
             Font.print(FONT16, 65, y - 23 - Font.getTextHeight(FONT16, link_text), link_text, COLOR_GRAY)
             y = y + 75
@@ -727,18 +727,7 @@ function Catalogs.draw()
             elseif task == "ChangingPageButtons" then
                 Font.print(FONT16, 65, y - 44, Language[Settings.Language].PAGINGCONTROLS[Settings.ChangingPageButtons], COLOR_GRAY)
             elseif task == "Translators" then
-                Font.print(
-                    FONT16,
-                    65,
-                    y - 44,
-                    ("@SamuEDL98 - Spanish \n@nguyenmao2101 - Vietnamese \n@theheroGAC - Italian \n@Cimmerian_Iter - French "):gsub(
-                        "%- (.-) ",
-                        function(a)
-                            return " " .. (LanguageNames[Settings.Language][a] or a) .. " "
-                        end
-                    ),
-                    COLOR_ROYAL_BLUE
-            )
+                Font.print(FONT16, 65, y - 44, ("@SamuEDL98 - Spanish \n@nguyenmao2101 - Vietnamese \n@theheroGAC - Italian \n@Cimmerian_Iter - French "):gsub("%- (.-) ", function(a) return " " .. (LanguageNames[Settings.Language][a] or a) .. " " end), COLOR_ROYAL_BLUE)
             elseif task == "ClearLibrary" then
                 if sure_clear_library > 0 then
                     Font.print(FONT16, 65, y - 44, Language[Settings.Language].SETTINGS.PressAgainToAccept, COLOR_CRIMSON)
