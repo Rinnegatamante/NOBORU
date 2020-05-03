@@ -14,9 +14,7 @@ local mode
 ---@param new_mode string | '"LIBRARY"' | '"CATALOGS"' | '"SETTINGS"' | '"DOWNLOAD"'
 ---Sets menu mode
 function Menu.setMode(new_mode)
-    if mode == new_mode then
-        return
-    end
+    if mode == new_mode then return end
     Catalogs.setMode(new_mode)
     mode = new_mode
 end
@@ -108,19 +106,6 @@ function Menu.draw()
     Graphics.drawImage(9, 304, historyIcon.e, COLOR_GRADIENT(COLOR_ROYAL_BLUE, COLOR_WHITE, button_a["HISTORY"]))
     Graphics.drawImage(9, 424, downloadsIcon.e, COLOR_GRADIENT(COLOR_ROYAL_BLUE, COLOR_WHITE, button_a["DOWNLOAD"]))
     Graphics.drawImage(9, 494, settingsIcon.e, COLOR_GRADIENT(COLOR_ROYAL_BLUE, COLOR_WHITE, button_a["SETTINGS"]))
-    --[[
-    Font.print(FONT30, 30, 107, Language[Settings.Language].APP.LIBRARY, Color.new(255, 255, 255, 255 - 128 * button_a["LIBRARY"]))
-    Font.print(FONT30, 30, 167, Language[Settings.Language].APP.CATALOGS, Color.new(255, 255, 255, 255 - 128 * button_a["CATALOGS"]))
-    Font.print(FONT30, 30, 227, Language[Settings.Language].APP.HISTORY, Color.new(255, 255, 255, 255 - 128 * button_a["HISTORY"]))
-    Font.print(FONT30, 30, 348, Language[Settings.Language].APP.IMPORT, Color.new(255, 255, 255, 255 - 128 * button_a["IMPORT"]))
-    local download_width = Font.getTextWidth(FONT30, Language[Settings.Language].APP.DOWNLOAD)
-    if download_width > 225 then
-        Font.print(FONT20, 30, 415, Language[Settings.Language].APP.DOWNLOAD, Color.new(255, 255, 255, 255 - 128 * button_a["DOWNLOAD"]))
-    else
-        Font.print(FONT30, 30, 408, Language[Settings.Language].APP.DOWNLOAD, Color.new(255, 255, 255, 255 - 128 * button_a["DOWNLOAD"]))
-    end
-    Font.print(FONT30, 30, 468, Language[Settings.Language].APP.SETTINGS, Color.new(255, 255, 255, 255 - 128 * button_a["SETTINGS"]))
-    --]]
     if ChapterSaver.is_download_running() then
         download_led = math.min(download_led + 0.1, 1)
     else
@@ -131,5 +116,9 @@ function Menu.draw()
         Catalogs.draw()
     end
     Details.draw()
+    Graphics.fillRect(0, 960, 0, 50, COLOR_BLACK)
+    for k, v in pairs(button_a) do
+        Font.print(FONT30, 64, 3 - 24 * v, Language[Settings.Language].APP[k], Color.new(255, 255, 255, 255 - 255 * v))
+    end
     Extra.draw()
 end
