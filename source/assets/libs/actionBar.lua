@@ -1,5 +1,39 @@
 local actions = {}
 local index = 0
+ActionBar = {}
+local Name = ""
+local y = 1
+local old = {}
+
+function ActionBar.setName(new_name)
+    old[#old + 1] = {v = 0, name = Name}
+    y = 1
+    Name = new_name
+end
+
+function ActionBar.draw()
+    Graphics.fillRect(0, 960, 0, 50, COLOR_BLACK)
+    for _, v in ipairs(old) do
+        Font.print(FONT30, 64, 5 - 24 * v.v, v.name, Color.new(255, 255, 255, 255 - 255 * v.v))
+    end
+    Font.print(FONT30, 64, 5 - 24 * y, Name, Color.new(255, 255, 255, 255 - 255 * y))
+end
+
+function ActionBar.update()
+    local new_old = {}
+    for _, v in ipairs(old) do
+        v.v = math.min(v.v + 0.1, 1)
+        if v.v ~= 1 then
+            new_old[#new_old + 1] = v
+        end
+    end
+    old = new_old
+    y = math.max(y - 0.1, 0)
+end
+
+function ActionBar.clear()
+    
+end
 
 function ClearActions()
     actions = {}

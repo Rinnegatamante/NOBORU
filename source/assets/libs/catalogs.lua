@@ -235,8 +235,12 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
         end
     elseif mode == "IMPORT" then
         if Controls.check(pad, SCE_CTRL_CIRCLE) and not Controls.check(oldpad, SCE_CTRL_CIRCLE) then
-            Import.back()
-            ImportSelector:resetSelected()
+            if Import.canBack() then
+                Import.back()
+                ImportSelector:resetSelected()
+            else
+                Menu.setMode("LIBRARY", true)
+            end
         end
         if Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) then
             local item = Import.listDir()[ImportSelector:getSelected()]

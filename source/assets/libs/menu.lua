@@ -14,15 +14,21 @@ local mode
 
 ---@param new_mode string | '"LIBRARY"' | '"CATALOGS"' | '"SETTINGS"' | '"DOWNLOAD"'
 ---Sets menu mode
-function Menu.setMode(new_mode)
-    if mode == new_mode then return end
+function Menu.setMode(new_mode, break_lock)
+    if mode == new_mode and not break_lock then return end
     Catalogs.setMode(new_mode)
     if new_mode == "LIBRARY" then
         ClearActions()
-        AddAction(importIcon, function() Menu.setMode("IMPORT") end)
+        AddAction(importIcon, function()
+            ClearActions()
+            Catalogs.setMode("IMPORT")
+            ActionBar.setName(Language[Settings.Language].APP["IMPORT"])
+        end)
+        AddAction()
     else
         ClearActions()
     end
+    ActionBar.setName(Language[Settings.Language].APP[new_mode])
     mode = new_mode
 end
 
@@ -30,7 +36,6 @@ local next_mode = {
     ["LIBRARY"] = "CATALOGS",
     ["CATALOGS"] = "HISTORY",
     ["HISTORY"] = "DOWNLOAD",
-    ["IMPORT"] = "DOWNLOAD",
     ["DOWNLOAD"] = "SETTINGS",
     ["SETTINGS"] = "SETTINGS"
 }
@@ -39,7 +44,6 @@ local prev_mode = {
     ["LIBRARY"] = "LIBRARY",
     ["CATALOGS"] = "LIBRARY",
     ["HISTORY"] = "CATALOGS",
-    ["IMPORT"] = "HISTORY",
     ["DOWNLOAD"] = "HISTORY",
     ["SETTINGS"] = "DOWNLOAD"
 }
@@ -60,8 +64,6 @@ function Menu.input(oldpad, pad, oldtouch, touch)
                 Menu.setMode("CATALOGS")
             elseif touch.y < 360 then
                 Menu.setMode("HISTORY")
-            elseif touch.y < 360 then
-                Menu.setMode("IMPORT")
             elseif touch.y > 470 then
                 Menu.setMode("SETTINGS")
             elseif touch.y > 390 then
@@ -80,7 +82,7 @@ function Menu.input(oldpad, pad, oldtouch, touch)
 end
 
 function Menu.update()
-    UpdateActionsBar()
+    ActionBar.update()
     Catalogs.update()
     Extra.update()
     Details.update()
@@ -90,7 +92,6 @@ local button_a = {
     ["LIBRARY"] = 1,
     ["CATALOGS"] = 1,
     ["HISTORY"] = 1,
-    ["IMPORT"] = 1,
     ["DOWNLOAD"] = 1,
     ["SETTINGS"] = 1
 }
@@ -99,7 +100,7 @@ local download_led = 0
 
 function Menu.draw()
     for k, v in pairs(button_a) do
-        if k == mode then
+        if k == mode or k == "LIBRARY" and mode == "IMPORT" then
             button_a[k] = math.max(v - 0.1, 0)
         else
             button_a[k] = math.min(v + 0.1, 1)
@@ -107,8 +108,8 @@ function Menu.draw()
     end
     Screen.clear(Themes[Settings.Theme].COLOR_LEFT_BACK)
     if logoSmall then
-    --Graphics.drawImage(0, 0, logoSmall.e)
-    end
+        --Graphics.drawImage(0, 0, logoSmall.e)
+        end
     Graphics.fillRect(50, 960, 0, 544, COLOR_BACK)
     Graphics.drawImage(9, 144, libraryIcon.e, COLOR_GRADIENT(COLOR_ROYAL_BLUE, COLOR_WHITE, button_a["LIBRARY"]))
     Graphics.drawImage(9, 224, catalogsIcon.e, COLOR_GRADIENT(COLOR_ROYAL_BLUE, COLOR_WHITE, button_a["CATALOGS"]))
@@ -125,10 +126,7 @@ function Menu.draw()
         Catalogs.draw()
     end
     Details.draw()
-    Graphics.fillRect(0, 960, 0, 50, COLOR_BLACK)
-    for k, v in pairs(button_a) do
-        Font.print(FONT30, 64, 5 - 24 * v, Language[Settings.Language].APP[k], Color.new(255, 255, 255, 255 - 255 * v))
-    end
+    ActionBar.draw()
     DrawActionsBar()
     Extra.draw()
 end
