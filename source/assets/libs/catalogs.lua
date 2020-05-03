@@ -6,6 +6,10 @@ local doesFileExist = System.doesFileExist
 local listDirectory = System.listDirectory
 
 local imprt = Image:new(Graphics.loadImage("app0:assets/images/import.png"))
+local searchIcon = Image:new(Graphics.loadImage("app0:assets/icons/search.png"))
+local popularIcon = Image:new(Graphics.loadImage("app0:assets/icons/popular.png"))
+local azIcon = Image:new(Graphics.loadImage("app0:assets/icons/az.png"))
+local latestIcon = Image:new(Graphics.loadImage("app0:assets/icons/latest.png"))
 
 local Parser = nil
 local TouchTimer = Timer.new()
@@ -107,6 +111,9 @@ local function selectParser(index)
     if parser then
         Parser = parser
         Catalogs.setMode("MANGA")
+        ClearActions()
+        AddAction(searchIcon)
+        AddAction(popularIcon)
     end
 end
 
@@ -195,6 +202,7 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
     if mode == "MANGA" then
         if Controls.check(pad, SCE_CTRL_CIRCLE) and not Controls.check(oldpad, SCE_CTRL_CIRCLE) then
             mode = "CATALOGS"
+            ClearActions()
             Catalogs.terminate()
         elseif Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) then
             local new_mode = getMangaMode == "POPULAR" and Parser.getLatestManga and "LATEST" or "POPULAR"

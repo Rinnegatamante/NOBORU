@@ -4,6 +4,7 @@ local createDirectory = System.createDirectory
 loadlib("utils")
 loadlib("image")
 loadlib("globals")
+loadlib("actionBar")
 
 local logo = Image:new(Graphics.loadImage("app0:assets/images/logo.png"))
 

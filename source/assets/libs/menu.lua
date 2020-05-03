@@ -6,6 +6,7 @@ local catalogsIcon = Image:new(Graphics.loadImage("app0:assets/icons/catalogs.pn
 local historyIcon = Image:new(Graphics.loadImage("app0:assets/icons/history.png"))
 local downloadsIcon = Image:new(Graphics.loadImage("app0:assets/icons/downloads.png"))
 local settingsIcon = Image:new(Graphics.loadImage("app0:assets/icons/settings.png"))
+local importIcon = Image:new(Graphics.loadImage("app0:assets/icons/import.png"))
 
 ---@param mode string
 ---Menu mode
@@ -16,13 +17,19 @@ local mode
 function Menu.setMode(new_mode)
     if mode == new_mode then return end
     Catalogs.setMode(new_mode)
+    if new_mode == "LIBRARY" then
+        ClearActions()
+        AddAction(importIcon, function() Menu.setMode("IMPORT") end)
+    else
+        ClearActions()
+    end
     mode = new_mode
 end
 
 local next_mode = {
     ["LIBRARY"] = "CATALOGS",
     ["CATALOGS"] = "HISTORY",
-    ["HISTORY"] = "IMPORT",
+    ["HISTORY"] = "DOWNLOAD",
     ["IMPORT"] = "DOWNLOAD",
     ["DOWNLOAD"] = "SETTINGS",
     ["SETTINGS"] = "SETTINGS"
@@ -33,7 +40,7 @@ local prev_mode = {
     ["CATALOGS"] = "LIBRARY",
     ["HISTORY"] = "CATALOGS",
     ["IMPORT"] = "HISTORY",
-    ["DOWNLOAD"] = "IMPORT",
+    ["DOWNLOAD"] = "HISTORY",
     ["SETTINGS"] = "DOWNLOAD"
 }
 
@@ -62,6 +69,7 @@ function Menu.input(oldpad, pad, oldtouch, touch)
             end
         end
         Catalogs.input(oldpad, pad, oldtouch, touch)
+        InputActionsBar(touch, oldtouch)
     else
         if Extra.getMode() == "END" then
             Details.input(oldpad, pad, oldtouch, touch)
@@ -72,6 +80,7 @@ function Menu.input(oldpad, pad, oldtouch, touch)
 end
 
 function Menu.update()
+    UpdateActionsBar()
     Catalogs.update()
     Extra.update()
     Details.update()
@@ -118,7 +127,8 @@ function Menu.draw()
     Details.draw()
     Graphics.fillRect(0, 960, 0, 50, COLOR_BLACK)
     for k, v in pairs(button_a) do
-        Font.print(FONT30, 64, 3 - 24 * v, Language[Settings.Language].APP[k], Color.new(255, 255, 255, 255 - 255 * v))
+        Font.print(FONT30, 64, 5 - 24 * v, Language[Settings.Language].APP[k], Color.new(255, 255, 255, 255 - 255 * v))
     end
+    DrawActionsBar()
     Extra.draw()
 end
