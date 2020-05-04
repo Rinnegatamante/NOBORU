@@ -7,6 +7,7 @@ local historyIcon = Image:new(Graphics.loadImage("app0:assets/icons/history.png"
 local downloadsIcon = Image:new(Graphics.loadImage("app0:assets/icons/downloads.png"))
 local settingsIcon = Image:new(Graphics.loadImage("app0:assets/icons/settings.png"))
 local importIcon = Image:new(Graphics.loadImage("app0:assets/icons/import.png"))
+local updateIcon = Image:new(Graphics.loadImage("app0:assets/icons/update.png"))
 
 ---@param mode string
 ---Menu mode
@@ -17,16 +18,22 @@ local mode
 function Menu.setMode(new_mode, break_lock)
     if mode == new_mode and not break_lock then return end
     Catalogs.setMode(new_mode)
+    ActionBar.clear()
     if new_mode == "LIBRARY" then
-        ClearActions()
-        AddAction(importIcon, function()
-            ClearActions()
+        ActionBar.addAction(updateIcon, function()
+            ParserManager.updateCounters()
+            ActionBar.setIndex(0)
+        end)
+        ActionBar.addAction(importIcon, function()
+            ActionBar.clear()
             Catalogs.setMode("IMPORT")
             ActionBar.setName(Language[Settings.Language].APP["IMPORT"])
         end)
-        AddAction()
-    else
-        ClearActions()
+    elseif new_mode == "CATALOGS" then
+        ActionBar.addAction(updateIcon, function()
+            Catalogs.updateParserList()
+            ActionBar.setIndex(0)
+        end)
     end
     ActionBar.setName(Language[Settings.Language].APP[new_mode])
     mode = new_mode
@@ -71,7 +78,7 @@ function Menu.input(oldpad, pad, oldtouch, touch)
             end
         end
         Catalogs.input(oldpad, pad, oldtouch, touch)
-        InputActionsBar(touch, oldtouch)
+        ActionBar.input(touch, oldtouch)
     else
         if Extra.getMode() == "END" then
             Details.input(oldpad, pad, oldtouch, touch)
@@ -109,8 +116,13 @@ function Menu.draw()
     Screen.clear(Themes[Settings.Theme].COLOR_LEFT_BACK)
     if logoSmall then
         --Graphics.drawImage(0, 0, logoSmall.e)
-        end
+    end
     Graphics.fillRect(50, 960, 0, 544, COLOR_BACK)
+    if Details.getFade() ~= 1 then
+        Catalogs.draw()
+    end
+    Details.draw()
+    Graphics.fillRect(0, 50, 0, 544, Themes[Settings.Theme].COLOR_LEFT_BACK)
     Graphics.drawImage(9, 144, libraryIcon.e, COLOR_GRADIENT(COLOR_ROYAL_BLUE, COLOR_WHITE, button_a["LIBRARY"]))
     Graphics.drawImage(9, 224, catalogsIcon.e, COLOR_GRADIENT(COLOR_ROYAL_BLUE, COLOR_WHITE, button_a["CATALOGS"]))
     Graphics.drawImage(9, 304, historyIcon.e, COLOR_GRADIENT(COLOR_ROYAL_BLUE, COLOR_WHITE, button_a["HISTORY"]))
@@ -122,11 +134,6 @@ function Menu.draw()
         download_led = math.max(download_led - 0.1, 0)
     end
     Graphics.fillCircle(38, 424, 6, Color.new(65, 105, 226, 255 * download_led - 160 * download_led * math.abs(math.sin(Timer.getTime(GlobalTimer) / 1000))))
-    if Details.getFade() ~= 1 then
-        Catalogs.draw()
-    end
-    Details.draw()
     ActionBar.draw()
-    DrawActionsBar()
     Extra.draw()
 end

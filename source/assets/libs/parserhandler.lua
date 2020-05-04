@@ -170,6 +170,9 @@ function ParserManager.updateCounters()
         F = function()
             local list = Database.getMangaList()
             local connection = Threads.netActionUnSafe(Network.isWifiEnabled)
+            for k, v in ipairs(list) do
+                v.Counter = 0
+            end
             if connection then
                 for k, v in ipairs(list) do
                     local old_name = v.Name

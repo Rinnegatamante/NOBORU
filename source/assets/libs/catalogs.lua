@@ -111,9 +111,9 @@ local function selectParser(index)
     if parser then
         Parser = parser
         Catalogs.setMode("MANGA")
-        ClearActions()
-        AddAction(searchIcon)
-        AddAction(popularIcon)
+        ActionBar.clear()
+        ActionBar.addAction(searchIcon)
+        ActionBar.addAction(popularIcon)
     end
 end
 
@@ -197,12 +197,14 @@ DownloadSelector:xaction(function(item)
 end)
 SettingSelector:xaction(selectSetting)
 ImportSelector:xaction(selectImport)
-
+function Catalogs.updateParserList()
+    ParserManager.updateParserList(Parsers)
+end
 function Catalogs.input(oldpad, pad, oldtouch, touch)
     if mode == "MANGA" then
         if Controls.check(pad, SCE_CTRL_CIRCLE) and not Controls.check(oldpad, SCE_CTRL_CIRCLE) then
             mode = "CATALOGS"
-            ClearActions()
+            ActionBar.clear()
             Catalogs.terminate()
         elseif Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) then
             local new_mode = getMangaMode == "POPULAR" and Parser.getLatestManga and "LATEST" or "POPULAR"
@@ -219,7 +221,7 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
         end
     elseif mode == "CATALOGS" then
         if Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
-            ParserManager.updateParserList(Parsers)
+            Catalogs.updateParserList()
         end
     elseif mode == "HISTORY" then
         if Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) then
@@ -275,7 +277,7 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
         if oldtouch.x then
             if TOUCH.MODE == TOUCH.READ then
                 if mode == "MANGA" or mode == "LIBRARY" or mode == "HISTORY" then
-                    local start = max(1, floor((Slider.Y - 20) / (MANGA_HEIGHT + 12)) * 4 + 1)
+                    local start = max(1, floor((Slider.Y - 20) / (MANGA_HEIGHT + 14)) * 4 + 1)
                     for i = start, min(#Results, start + 11) do
                         local lx = ((i - 1) % 4 - 2) * (MANGA_WIDTH + 14) + 505 + 7
                         local uy = floor((i - 1) / 4) * (MANGA_HEIGHT + 14) - Slider.Y + 14
@@ -284,7 +286,7 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
                             break
                         end
                     end
-                elseif oldtouch.x > 265 and oldtouch.x < 945 then
+                elseif oldtouch.x > 55 and oldtouch.x < 955 and oldtouch.y > 50 then
                     local id = floor((Slider.Y - 10 + oldtouch.y) / 75) + 1
                     if mode == "CATALOGS" then
                         selectParser(id)
@@ -321,7 +323,7 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
     if TOUCH.MODE == TOUCH.READ then
         if abs(Slider.V) > 0.1 or abs(Slider.TouchY - touch.y) > 10 then
             TOUCH.MODE = TOUCH.SLIDE
-        elseif oldtouch.x > 265 and oldtouch.x < 945 then
+        elseif oldtouch.x > 55 and oldtouch.x < 955 and oldtouch.y > 50 then
             local id = floor((Slider.Y - 10 + oldtouch.y) / 75) + 1
             if mode == "CATALOGS" and GetParserList()[id] then
                 new_itemID = id
@@ -339,7 +341,7 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
     else
         Slider.ItemID = new_itemID
     end
-    if TOUCH.MODE == TOUCH.SLIDE and oldtouch.x and touch.x and touch.x > 240 then
+    if TOUCH.MODE == TOUCH.SLIDE and oldtouch.x and touch.x and touch.x > 50 then
         Slider.V = oldtouch.y - touch.y
     end
 end
@@ -358,33 +360,9 @@ function Catalogs.update()
         elseif Details.getMode() == "END" then
             Loading.setMode("NONE")
         end
-        if mode == "MANGA" then
-            Panel.set{"L\\R", "Square", "Triangle", "DPad", "Cross", "Circle",
-                ["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
-                Square = getMangaMode == "POPULAR" and Language[Settings.Language].PANEL.MODE_POPULAR or getMangaMode == "LATEST" and Language[Settings.Language].PANEL.MODE_LATEST or getMangaMode == "SEARCH" and string.format(Language[Settings.Language].PANEL.MODE_SEARCHING, searchData),
-                Triangle = Parser.searchManga and Language[Settings.Language].PANEL.SEARCH or nil,
-                Circle = Language[Settings.Language].PANEL.BACK,
-                DPad = Language[Settings.Language].PANEL.CHOOSE,
-                Cross = Language[Settings.Language].PANEL.SELECT
-            }
-        elseif mode == "LIBRARY" then
-            Panel.set{"L\\R", "DPad", "Triangle", "Cross",
-                ["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
-                DPad = Language[Settings.Language].PANEL.CHOOSE,
-                Cross = Language[Settings.Language].PANEL.SELECT,
-                Triangle = Language[Settings.Language].PANEL.UPDATE
-            }
-        elseif mode == "HISTORY" then
-            Panel.set{"L\\R", "DPad", "Cross", "Square",
-                ["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
-                DPad = Language[Settings.Language].PANEL.CHOOSE,
-                Cross = Language[Settings.Language].PANEL.SELECT,
-                Square = Language[Settings.Language].PANEL.DELETE
-            }
-        end
         local item = MangaSelector:getSelected()
         if item ~= 0 then
-            Slider.Y = Slider.Y + (math.floor((item - 1) / 4) * (MANGA_HEIGHT + 12) + MANGA_HEIGHT / 2 - 232 - Slider.Y) / 8
+            Slider.Y = Slider.Y + (math.floor((item - 1) / 4) * (MANGA_HEIGHT + 14) + MANGA_HEIGHT / 2 - 232 - Slider.Y) / 8
             if mode == "MANGA" and not Results.NoPages and Parser and item > #Results - 4 then
                 if not ParserManager.check(Results) then
                     ParserManager.getMangaListAsync(getMangaMode, Parser, page, Results, searchData)
@@ -412,72 +390,22 @@ function Catalogs.update()
         elseif mode == "HISTORY" then
             Results = Cache.getHistory()
         end
-    elseif mode == "CATALOGS" then
-        Parsers = GetParserList()
-        Panel.set{"L\\R", "Triangle", "DPad", "Cross",
-            ["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
-            Triangle = Language[Settings.Language].PANEL.UPDATE,
-            DPad = Language[Settings.Language].PANEL.CHOOSE,
-            Cross = Language[Settings.Language].PANEL.SELECT
-        }
-        local item = ParserSelector:getSelected()
-        if item ~= 0 then
-            Slider.Y = Slider.Y + (item * 75 - 272 - Slider.Y) / 8
+    elseif mode == "CATALOGS" or mode == "DOWNLOAD" or mode == "SETTINGS" or mode == "IMPORT" then
+        local list, item
+        if mode == "CATALOGS" then
+            list = GetParserList()
+            Parsers = list
+            item = ParserSelector:getSelected()
+        elseif mode == "DOWNLOAD" then
+            list = ChapterSaver.getDownloadingList()
+            item = DownloadSelector:getSelected()
+        elseif mode == "SETTINGS" then
+            list = Settings.list()
+            item = SettingSelector:getSelected()
+        elseif mode == "IMPORT" then
+            list = Import.listDir()
+            item = ImportSelector:getSelected()
         end
-        if Slider.Y < -50 then
-            Slider.Y = -50
-            Slider.V = 0
-        elseif Slider.Y > ceil(#Parsers) * 75 - 544 + 10 then
-            Slider.Y = max(-50, ceil(#Parsers) * 75 - 544 + 10)
-            Slider.V = 0
-        end
-    elseif mode == "DOWNLOAD" then
-        local list = ChapterSaver.getDownloadingList()
-        Panel.set{"L\\R", "DPad", "Cross",
-            ["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
-            DPad = Language[Settings.Language].PANEL.CHOOSE,
-            Cross = Language[Settings.Language].PANEL.CANCEL
-        }
-        local item = DownloadSelector:getSelected()
-        if item ~= 0 then
-            Slider.Y = Slider.Y + (item * 75 - 272 - Slider.Y) / 8
-        end
-        if Slider.Y < -50 then
-            Slider.Y = -50
-            Slider.V = 0
-        elseif Slider.Y > ceil(#list) * 75 - 544 + 10 then
-            Slider.Y = max(-50, ceil(#list) * 75 - 544 + 10)
-            Slider.V = 0
-        end
-    elseif mode == "SETTINGS" then
-        local list = Settings.list()
-        Panel.set{"L\\R", "DPad", "Circle", "Cross",
-            ["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
-            DPad = Language[Settings.Language].PANEL.CHOOSE,
-            Cross = Language[Settings.Language].PANEL.SELECT,
-            Circle = Settings.inTab() and Language[Settings.Language].PANEL.BACK
-        }
-        local item = SettingSelector:getSelected()
-        if item ~= 0 then
-            Slider.Y = Slider.Y + (item * 75 - 272 - Slider.Y) / 8
-        end
-        if Slider.Y < -50 then
-            Slider.Y = -50
-            Slider.V = 0
-        elseif Slider.Y > ceil(#list) * 75 - 544 + 10 then
-            Slider.Y = max(-50, ceil(#list) * 75 - 544 + 10)
-            Slider.V = 0
-        end
-    elseif mode == "IMPORT" then
-        local list = Import.listDir()
-        local item = ImportSelector:getSelected()
-        Panel.set{"L\\R", "DPad", "Circle", "Cross", "Square",
-            ["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
-            DPad = Language[Settings.Language].PANEL.CHOOSE,
-            Square = list[item] and Import.canImport(list[item]) and Language[Settings.Language].PANEL.IMPORT,
-            Cross = Language[Settings.Language].PANEL.SELECT,
-            Circle = Import.canBack() and Language[Settings.Language].PANEL.BACK
-        }
         if item ~= 0 then
             Slider.Y = Slider.Y + (item * 75 - 272 - Slider.Y) / 8
         end
