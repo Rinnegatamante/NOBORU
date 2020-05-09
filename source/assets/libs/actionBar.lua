@@ -4,7 +4,7 @@ ActionBar = {}
 local Name = ""
 local y = 1
 local old = {}
-
+local keys = {}
 function ActionBar.setName(new_name)
     old[#old + 1] = {v = 0, name = Name}
     y = 1
@@ -28,7 +28,8 @@ function ActionBar.save()
     return {
         Name = Name,
         actions = actions,
-        index = index
+        index = index,
+        keys = keys
     }
 end
 
@@ -36,6 +37,7 @@ function ActionBar.load(load_table)
     Name = load_table.Name
     actions = load_table.actions
     index = load_table.index
+    keys = load_table.keys
 end
 
 function ActionBar.update()
@@ -76,14 +78,25 @@ end
 function ActionBar.clear()
     actions = {}
     index = 0
+    keys = {}
 end
 
-function ActionBar.addAction(icon, action)
+function ActionBar.addAction(icon, action, key)
     actions[#actions + 1] = {
         icon = icon,
         f = action,
         a = 1
     }
+    if key then
+        keys[key] = #actions
+    end
+end
+
+function ActionBar.getKeyIndex(key)
+    if keys[key] then
+        return keys[key]
+    end
+    return 0
 end
 
 function ActionBar.makeAction(_index)

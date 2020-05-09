@@ -28,6 +28,14 @@ local abs, ceil, floor, max, min = math.abs, math.ceil, math.floor, math.max, ma
 
 StartSearch = false
 
+local function setMangaMode(new_mode)
+    if getMangaMode ~= new_mode then
+        Catalogs.terminate()
+        getMangaMode = new_mode
+        Notifications.push(getMangaMode == "POPULAR" and Language[Settings.Language].PANEL.MODE_POPULAR or getMangaMode == "LATEST" and Language[Settings.Language].PANEL.MODE_LATEST)
+    end
+end
+
 local function freeMangaImage(manga)
     if manga and manga.ImageDownload then
         Threads.remove(manga)
@@ -112,8 +120,37 @@ local function selectParser(index)
         Parser = parser
         Catalogs.setMode("MANGA")
         ActionBar.clear()
-        ActionBar.addAction(searchIcon)
-        ActionBar.addAction(popularIcon)
+        if parser.searchManga then
+            ActionBar.addAction(searchIcon,function()
+                if Parser.searchManga then
+                    Keyboard.show(Language[Settings.Language].APP.SEARCH, searchData, 128, TYPE_DEFAULT, MODE_TEXT, OPT_NO_AUTOCAP)
+                    StartSearch = true
+                end
+            end, "search")
+        end
+        if parser.getPopularManga then
+            ActionBar.addAction(popularIcon,function()
+                setMangaMode("POPULAR")
+            end,"popular")
+        end
+        if parser.getLatestManga then
+            ActionBar.addAction(latestIcon,function()
+                setMangaMode("LATEST")
+            end,"latest")
+        end
+        if parser.getAZManga then
+            ActionBar.addAction(azIcon,nil,"az")
+        end
+        local i = ActionBar.getKeyIndex("popular")
+        if i == 0 then
+            i = ActionBar.getKeyIndex("latest")
+        end
+        if i == 0 then
+            i = ActionBar.getKeyIndex("az")
+        end
+        if i > 0 then
+            ActionBar.setIndex(i)
+        end
     end
 end
 
@@ -208,11 +245,7 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
             Catalogs.terminate()
         elseif Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) then
             local new_mode = getMangaMode == "POPULAR" and Parser.getLatestManga and "LATEST" or "POPULAR"
-            if getMangaMode ~= new_mode then
-                Catalogs.terminate()
-                getMangaMode = new_mode
-                Notifications.push(getMangaMode == "POPULAR" and Language[Settings.Language].PANEL.MODE_POPULAR or getMangaMode == "LATEST" and Language[Settings.Language].PANEL.MODE_LATEST)
-            end
+            setMangaMode(new_mode)
         elseif Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
             if Parser.searchManga then
                 Keyboard.show(Language[Settings.Language].APP.SEARCH, searchData, 128, TYPE_DEFAULT, MODE_TEXT, OPT_NO_AUTOCAP)
