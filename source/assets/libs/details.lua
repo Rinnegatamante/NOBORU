@@ -331,7 +331,9 @@ function Details.draw()
         --[[
         local BLUE = Color.new(42, 47, 78, Alpha)
         local RED = Color.new(137, 30, 43, Alpha)
-        Graphics.fillRect(920, 960, 90, 544, BACK_COLOR)
+        local start = math.max(1, math.floor(Slider.Y / 80) + 1)
+        local shift = (1 - M) * 544
+        local y = shift - Slider.Y + start * 80
         local text, color = Language[Settings.Language].DETAILS.ADD_TO_LIBRARY, BLUE
         if Database.check(Manga) then
             color = RED
@@ -394,6 +396,9 @@ function Details.draw()
                     Font.print(BONT16, 65, y + 28, Chapters[i].Name or ("Chapter " .. i), BLACK)
                 end
                 Graphics.drawScaleImage(850, y, LUA_GRADIENTH.e, 1, 79, BACK_COLOR)
+                if n > 1 then
+                    Graphics.drawLine(270, 920, y, y, WHITE)
+                end
                 if n < ListCount then
                     Graphics.drawLine(55, 950, y + 79, y + 79, BLACK)
                 end
@@ -423,6 +428,7 @@ function Details.draw()
             y = y + 80
         end
         
+        Graphics.fillRect(920, 960, 90, 544, BACK_COLOR)
         if mode == "START" and #Chapters == 0 and not ParserManager.check(Chapters) and not is_notification_showed then
             is_notification_showed = true
             Notifications.push(Language[Settings.Language].WARNINGS.NO_CHAPTERS)

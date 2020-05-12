@@ -480,6 +480,9 @@ function Catalogs.draw()
             if Slider.ItemID == i then
                 Graphics.fillRect(55, 950, y - 75, y - 1, COLOR_SELECTED)
             end
+            if i > 1 then
+                Graphics.drawLine(265, 945, y - 75, y - 75, Color.new(200, 200, 200))
+            end
             if i < #Parsers then
                 Graphics.drawLine(55, 950, y, y, Color.new(200, 200, 200))
             end
@@ -542,6 +545,9 @@ function Catalogs.draw()
             if object.active and object.name ~= "..." then
                 Graphics.drawRotateImage(925 - 16, y - 38, imprt.e, 0, COLOR_ICON_EXTRACT)
             end
+            if i > 1 then
+                Graphics.drawLine(265, 945, y - 75, y - 75, Color.new(200, 200, 200))
+            end
             if i < #list then
                 Graphics.drawLine(55, 950, y, y, Color.new(200, 200, 200))
             end
@@ -571,6 +577,9 @@ function Catalogs.draw()
             local page = task.page or 0
             if Slider.ItemID == i then
                 Graphics.fillRect(55, 950, y - 75, y - 1, COLOR_SELECTED)
+            end
+            if i > 1 then
+                Graphics.drawLine(265, 945, y - 75, y - 75, Color.new(200, 200, 200))
             end
             if i < #list then
                 Graphics.drawLine(55, 950, y, y, Color.new(200, 200, 200))
@@ -610,7 +619,14 @@ function Catalogs.draw()
         for i = start, min(#list, start + 9) do
             local task = list[i]
             if Slider.ItemID == i then
-                Graphics.fillRect(55, 950, y - 75, y - 1, COLOR_SELECTED)
+                local dy_for_translators = 0
+                if list[i] == "Translators" then
+                    dy_for_translators = 50
+                end
+                Graphics.fillRect(265, 945, y - 75, y - 1 + dy_for_translators, COLOR_SELECTED)
+            end
+            if i > 1 then
+                Graphics.drawLine(265, 945, y - 75, y - 75, Color.new(200, 200, 200))
             end
             if i < #list then
                 Graphics.drawLine(55, 950, y, y, Color.new(200, 200, 200))
@@ -668,7 +684,9 @@ function Catalogs.draw()
             elseif task == "ProxyPort" then
                 Font.print(FONT16, 65, y - 44, Settings.ProxyPort, COLOR_GRAY)
             elseif task == "UseProxyAuth" then
-                Font.print(FONT16, 65, y - 44, Language[Settings.Language].YORN[Settings.UseProxyAuth], COLOR_ROYAL_BLUE)
+                Font.print(FONT16, 275, y - 44, Language[Settings.Language].YORN[Settings.UseProxyAuth], COLOR_ROYAL_BLUE)
+            elseif task == "SkipCacheChapterChecking" then
+                Font.print(FONT16, 275, y - 44, Language[Settings.Language].YORN[Settings.SkipCacheChapterChecking], COLOR_ROYAL_BLUE)
             elseif task == "ProxyAuth" then
                 Font.print(FONT16, 65, y - 44, Settings.ProxyAuth, COLOR_GRAY)
             elseif task == "ChapterSorting" then
@@ -700,7 +718,7 @@ function Catalogs.draw()
             elseif task == "ChangingPageButtons" then
                 Font.print(FONT16, 65, y - 44, Language[Settings.Language].PAGINGCONTROLS[Settings.ChangingPageButtons], COLOR_GRAY)
             elseif task == "Translators" then
-                Font.print(FONT16, 65, y - 44, ("@SamuEDL98 - Spanish \n@nguyenmao2101 - Vietnamese \n@theheroGAC - Italian \n@Cimmerian_Iter - French "):gsub("%- (.-) ", function(a) return " " .. (LanguageNames[Settings.Language][a] or a) .. " " end), COLOR_ROYAL_BLUE)
+                Font.print(FONT16, 275, y - 44, ("@SamuEDL98 - Spanish \n@nguyenmao2101 - Vietnamese \n@theheroGAC - Italian \n@Cimmerian_Iter - French \n@kemalsanli - Turkish "):gsub("%- (.-) ", function(a) return " " .. (LanguageNames[Settings.Language][a] or a) .. " " end), COLOR_ROYAL_BLUE)
             elseif task == "ClearLibrary" then
                 if sure_clear_library > 0 then
                     Font.print(FONT16, 65, y - 44, Language[Settings.Language].SETTINGS.PressAgainToAccept, COLOR_CRIMSON)
